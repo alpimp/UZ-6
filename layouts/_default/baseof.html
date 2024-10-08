@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{{ block "title" . }}
+        {{ or (T "Title" ) .Name | safeHTML }}
+    {{ end }}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  {{ .Scratch.Set "scripts" (slice "")  }}
+  <body>
+    {{ block "main" . }}
+      <!-- The part of the page that begins to differ between templates -->
+    {{ end }}
+                {{ partial "form1.html" . }}
+  {{  range (.Scratch.Get "scripts") }}
+  {{ . | safeHTML }}
+  {{ end }}
+  </body>
+</html>

@@ -1,0 +1,6 @@
+{{ define "main" }}
+
+<div>{{ range where .Site.Pages "Type" "=" "test" }} {{ .Content }} {{ end }}</div>    
+
+<div>{{ range where .Site.Pages "Type" "=" "test1" }} {{ .Content }} {{ end }}</div>    
+{{ end }}
