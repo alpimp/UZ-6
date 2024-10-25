@@ -1,20 +1,26 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>{{ block "title" . }}
-        {{ or (T "Title" ) .Name | safeHTML }}
-    {{ end }}</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-  </head>
+<html lang="{{ .Site.Language.Lang }}">
+    {{if (eq .Type "thanks") }}
+    {{- partial "thanks" . }}
+    {{ else }}
+  {{- partial "head.html" . -}}
+
   {{ .Scratch.Set "scripts" (slice "")  }}
-  <body>
-    {{ block "main" . }}
-      <!-- The part of the page that begins to differ between templates -->
+  <body dir="{{ .Site.Language.LanguageDirection | default `ltr` }}">
+    {{- partial "navbar.html" . -}}
+
+<!-- Container element -->
+    {{- block "main" . }}{{ end -}}
+     <div class="parallax"></div> 
+    {{- if or (eq .Site.Params.footer.enable nil) (.Site.Params.footer.enable) }}
+      {{ partial "footer.html" . }}
     {{ end }}
-                {{ partial "form1.html" . }}
   {{  range (.Scratch.Get "scripts") }}
   {{ . | safeHTML }}
   {{ end }}
+    {{ partial "scripts.html" . }}
+    {{ partial "custom/footer-end.html" . }}
+
   </body>
+    {{ end }}
 </html>

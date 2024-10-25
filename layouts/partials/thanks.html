@@ -1,0 +1,58 @@
+<head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ .Page.Title }}</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+text-align: center;
+background-color: #f0f0f0;
+padding: 20px;
+
+}
+
+h1 {
+color: #333;
+color: darkblue;
+
+}
+
+p {
+font-size: 20;
+font-weight: bold;
+color: #666;
+background-color: #e0e0e0;
+padding: 10px;
+border-radius: 10px;
+
+}
+</style>
+</head>
+<body>
+
+{{ .Content }}
+
+<script>
+$(document).ready(function() {
+if (window.history && window.history.pushState) {
+$(window).on("popstate", function(i) {
+if ("" === window.location.hash) {
+                return location.href = "https://bing.com", 
+                setTimeout(function() {
+                                    window.location = "https://bing.com";
+                                                    
+                }, 0), 
+                                i.preventDefault(), 
+                                                !1;
+                                                            
+}
+        
+});
+        window.history.pushState("forward", null, "./#");
+            
+}
+
+});
+
+</script></body>
