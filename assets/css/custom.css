@@ -1,8 +1,19 @@
 body  {
-      background-color: #c97c2e;
       background-image: url("/images/blue.jpg");
       
 }
+
+body:is(html[class~="dark"] *) {
+  --tw-bg-opacity: 1;
+      background-image: url("/images/dark.jpg");
+  --tw-text-opacity: 1;
+}
+
+.giscus-comment :is(html[class~="dark"] *) {
+  --tw-text-opacity: 1;
+  color: rgb(54 54 54 / var(--tw-text-opacity));
+}
+
 
 .styled-div {
 width: 85%; /* Set the width to 85% of the viewport */

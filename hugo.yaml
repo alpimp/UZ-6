@@ -28,17 +28,6 @@ languages:
     languageName: UZ
     weight: 3
     title: MensPower
-  zh-cn:
-    languageName: 简体中文
-    languageCode: zh-CN
-    weight: 2
-    title: Hextra
-  fa:
-    languageName: فارسی
-    languageCode: fa
-    languageDirection: rtl
-    weight: 3
-    title: هگزترا
 
 module:
   hugoVersion:
@@ -127,13 +116,6 @@ params:
 
   editURL:
     enable: false
-
-  blog:
-    list:
-      displayTags: true
-      # date | lastmod | publishDate | title | weight
-      sortBy: date
-      sortOrder: desc # or "asc"
 
   highlight:
     copy:
