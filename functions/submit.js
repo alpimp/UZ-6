@@ -90,16 +90,16 @@ async function processQueue() {
 function createBody(get_ip, country_code, tz, asn, formData, api_key, id_webmaster, id_offer, id_source, id_stream) {
   return {
     ip_address: get_ip,
-    country_code: country_code;
-    tz: tz;
-    asn: asn;
+    country_code: country_code,
+    tz: tz,
+    asn: asn,
     alpha_val: formData.get("alpha_val"),
     demo_val: formData.get("demo_val"),
     display: formData.get("display"),
     touch: formData.get("touch"),
     get_ua: formData.get("get_ua"),
     lang: formData.get("lang"),
-    api_key: 
+    api_key: api_key, 
     id_webmaster: id_webmaster, 
     id_offer: id_offer, 
     id_source: id_source, 
