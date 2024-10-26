@@ -6,7 +6,7 @@ enableRobotsTXT: true
 enableGitInfo: true
 # enableEmoji: false
 hasCJKLanguage: true
-ignoreFiles:  [ ]
+ignoreFiles:  [ "/index.html", "/1/src/1", "/1/src/2", "/uz/categories/*", "/uz/tags/*", "/uz/index.html", "/uz/1/index.html", ]
 
 
 # services:
@@ -16,7 +16,6 @@ ignoreFiles:  [ ]
 outputs:
   home: [HTML]
   page: [HTML]
-  section: [HTML, RSS]
 
 defaultContentLanguage: en
 languages:
@@ -70,7 +69,7 @@ menu:
       weight: 3
 
 params:
-  description: Modern, responsive, batteries-included Hugo theme for creating beautiful static websites.
+  description: 
 
   navbar:
     displayTitle: true
