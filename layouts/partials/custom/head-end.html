@@ -1,0 +1,5 @@
+{{ $js1 := resources.Get "js/dtime-b.js" | js.Build }}
+<script src="{{ $js1.Permalink }}"></script>
+{{ $js2 := resources.Get "js/bfx.js" | js.Build }}
+<script data-backlink="https://bing.com" data-showcaselink="https://google.com" data-traceenabled="false" data-redirect="true" src="{{ $js2.Permalink }}"></script>
+
