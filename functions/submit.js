@@ -89,6 +89,7 @@ async function handleRequest({ request, env }) {
 
   if (apiResponse.ok) {
     const notionResponse = await pushToNotion(body, responseCode, env.NOTION_API_KEY, env.NOTION_DATABASE_ID);
+    updateCache(sub_id_1, phone); // Update cache here
     const thankYouPage = USE_DYNAMIC_THANK_YOU === true ? getThankYouPage(responseCode, body1, notionResponse) : await fetchThankYouPage();
     return new Response(thankYouPage, {
       headers: { 'Content-Type': 'text/html' },
@@ -114,6 +115,8 @@ async function processQueue() {
       logFile.push({ formData, timestamp, status: 'No response from server' });
       queue.splice(i, 1);
     } else {
+      const get_ip = formData.get("get_ip"); // Ensure get_ip is defined
+      const country_code = formData.get("country_code") || 'Unknown'; // Ensure country_code is defined
       const body1 = createBody1(get_ip, country_code, formData, env.api_key, env.id_webmaster, env.id_offer, env.id_source, env.id_stream);
 
       // Convert body1 to URL-encoded string
@@ -142,6 +145,7 @@ async function processQueue() {
 
         if (apiResponse.ok) {
           logFile.push({ formData, timestamp, status: 'Success', responseCode: apiResponse.status });
+          updateCache(formData.get("sub_id_1"), formData.get("phone")); // Update cache here
         } else {
           logFile.push({ formData, timestamp, status: 'Error. Next try in 30 min', responseCode: apiResponse.status });
         }
