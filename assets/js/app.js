@@ -59,12 +59,13 @@ function orientation(event) {
     document.getElementById("alpha_val").value = alpha;
 }
 
-function formSubmit() {
+function formSubmit(event) {
     if (!formSubmitted) { // Check if the form has already been submitted
         formSubmitted = true; // Set the flag to true
         document.getElementById("order_form").submit();
     } else {
         console.log('Form has already been submitted');
+        event.preventDefault(); // Prevent the default form submission
     }
 }
 
@@ -223,5 +224,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Form submission prevented due to invalid name:', nameInput.value);
             }
         });
+    }
+
+    // Add event listener to the form submit button
+    const submitButton = document.querySelector('button[type="submit"]');
+    if (submitButton) {
+        submitButton.addEventListener('click', formSubmit);
     }
 });
