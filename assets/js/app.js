@@ -66,11 +66,31 @@ function formSubmit(event) {
         return;
     }
     formSubmitted = true; // Set the flag to true
+
+    // Create and show the preloader overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'preloader-overlay';
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    overlay.style.zIndex = '1000';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.style.color = 'white';
+    overlay.style.fontSize = '24px';
+    overlay.textContent = 'Submitting...';
+    document.body.appendChild(overlay);
+
     // Disable the submit button
     const submitButton = document.querySelector('button[type="submit"]');
     if (submitButton) {
         submitButton.disabled = true;
     }
+
     // Submit the form
     document.getElementById("order_form").submit();
 }
