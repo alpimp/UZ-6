@@ -2,8 +2,7 @@ const queue = [];
 const logFile = [];
 const processingInterval = 30 * 60 * 1000; // 30 minutes
 const maxProcessingTime = 24 * 60 * 60 * 1000; // 24 hours
-const cache = new Map();
-const cacheExpiration = 24 * 60 * 60 * 1000; // 24 hours
+const cacheExpiration = 24 * 60 * 60; // 24 hours in seconds
 
 export async function onRequestPost(context) {
   try {
@@ -38,91 +37,83 @@ async function handleRequest({ request, env }) {
   const sub_id_1 = formData.get("sub_id_1");
   const phone = formData.get("phone");
 
-  // Check cache for sub_id_1 and phone
-  const now = Date.now();
-  const sub_id_1_cache = cache.get(`sub_id_1:${sub_id_1}`);
-  const phone_cache = cache.get(`phone:${phone}`);
+  // Cache keys
+  const subId1Key = `sub_id_1:${sub_id_1}`;
+  const phoneKey = `phone:${phone}`;
 
-  if ((sub_id_1_cache && now - sub_id_1_cache.timestamp < cacheExpiration) || 
-      (phone_cache && now - phone_cache.timestamp < cacheExpiration)) {
-    // Skip processing and send only to Notion
+  // Check cache in KV
+  const subId1Cache = await env.CACHE.get(subId1Key);
+  const phoneCache = await env.CACHE.get(phoneKey);
+
+  if (subId1Cache !== null || phoneCache !== null) {
+    // Skip processing, send only to Notion
     const body = createBody(timestamp, get_ip, country_code, tz, asn, ref, formData, env.api_key, env.id_webmaster, env.id_offer, env.id_source, env.id_stream);
     const responseCode = 200; // Assuming success for Notion push
     const notionResponse = await pushToNotion(body, responseCode, env.NOTION_API_KEY, env.NOTION_DATABASE_ID);
-    const thankYouPage = USE_DYNAMIC_THANK_YOU === true ? getThankYouPage(responseCode, body1, notionResponse) : await fetchThankYouPage();
-    return new Response(thankYouPage, {
-      headers: { 'Content-Type': 'text/html' },
-    });
-  }
-
-  // Proceed with normal processing
-  const body = createBody(timestamp, get_ip, country_code, tz, asn, ref, formData, env.api_key, env.id_webmaster, env.id_offer, env.id_source, env.id_stream);
-  const body1 = createBody1(get_ip, country_code, formData, env.api_key, env.id_webmaster, env.id_offer, env.id_source, env.id_stream);
-
-  // Convert body1 to URL-encoded string
-  const urlEncodedBody = new URLSearchParams(body1).toString();
-
-  // Determine the API endpoint based on USE_DYNAMIC_THANK_YOU
-  const apiEndpoint = USE_DYNAMIC_THANK_YOU ? 'http://httpbin.org/post' : 'https://api.cpa.house/method/send_order';
-
-  // Send the form data to the API endpoint
-  const apiResponse = await Promise.race([
-    fetch(apiEndpoint, {
-      method: 'POST',
-      body: urlEncodedBody,
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    }),
-    new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 30000)),
-  ]);
-
-  const responseCode = apiResponse.status;
-  const responseBodyText = await apiResponse.text(); // Extract the response body as text
-
-  // Attempt to parse the response body as JSON
-  let responseBody;
-  try {
-    responseBody = JSON.parse(responseBodyText);
-    body.msg = JSON.stringify(responseBody); // Stringify the JSON object
-  } catch (e) {
-    body.msg = `"${responseBodyText}"`; // Quote the raw text
-  }
-
-  if (apiResponse.ok) {
-    const notionResponse = await pushToNotion(body, responseCode, env.NOTION_API_KEY, env.NOTION_DATABASE_ID);
-    updateCache(sub_id_1, phone); // Update cache here
-    const thankYouPage = USE_DYNAMIC_THANK_YOU === true ? getThankYouPage(responseCode, body1, notionResponse) : await fetchThankYouPage();
-    return new Response(thankYouPage, {
-      headers: { 'Content-Type': 'text/html' },
-    });
+    const thankYouPage = USE_DYNAMIC_THANK_YOU === true ? getThankYouPage(responseCode, body, notionResponse) : await fetchThankYouPage();
+    return new Response(thankYouPage, { headers: { 'Content-Type': 'text/html' } });
   } else {
-    queue.push({ formData, timestamp: Date.now() });
-    await processQueue(); // Call processQueue here
-    const notionResponse = await pushToNotion(body, responseCode, env.NOTION_API_KEY, env.NOTION_DATABASE_ID);
-    const thankYouPage = USE_DYNAMIC_THANK_YOU === true ? getThankYouPage(responseCode, body1, notionResponse) : await fetchThankYouPage();
-    return new Response(thankYouPage, {
-      headers: { 'Content-Type': 'text/html' },
-    });
+    // Proceed with form processing
+    const body = createBody(timestamp, get_ip, country_code, tz, asn, ref, formData, env.api_key, env.id_webmaster, env.id_offer, env.id_source, env.id_stream);
+    const body1 = createBody1(get_ip, country_code, formData, env.api_key, env.id_webmaster, env.id_offer, env.id_source, env.id_stream);
+    const urlEncodedBody = new URLSearchParams(body1).toString();
+    const apiEndpoint = USE_DYNAMIC_THANK_YOU ? 'http://httpbin.org/post' : 'https://api.cpa.house/method/send_order';
+
+    const apiResponse = await Promise.race([
+      fetch(apiEndpoint, {
+        method: 'POST',
+        body: urlEncodedBody,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 30000)),
+    ]);
+
+    const responseCode = apiResponse.status;
+    const responseBodyText = await apiResponse.text();
+    let responseBody;
+    try {
+      responseBody = JSON.parse(responseBodyText);
+      body.msg = JSON.stringify(responseBody);
+    } catch (e) {
+      body.msg = `"${responseBodyText}"`;
+    }
+
+    if (apiResponse.ok) {
+      const notionResponse = await pushToNotion(body, responseCode, env.NOTION_API_KEY, env.NOTION_DATABASE_ID);
+      await updateCache(sub_id_1, phone, env.CACHE, cacheExpiration);
+      const thankYouPage = USE_DYNAMIC_THANK_YOU === true ? getThankYouPage(responseCode, body, notionResponse) : await fetchThankYouPage();
+      return new Response(thankYouPage, { headers: { 'Content-Type': 'text/html' } });
+    } else {
+      queue.push({ formData, timestamp: Date.now() });
+      await processQueue(env, cacheExpiration);
+      const notionResponse = await pushToNotion(body, responseCode, env.NOTION_API_KEY, env.NOTION_DATABASE_ID);
+      const thankYouPage = USE_DYNAMIC_THANK_YOU === true ? getThankYouPage(responseCode, body, notionResponse) : await fetchThankYouPage();
+      return new Response(thankYouPage, { headers: { 'Content-Type': 'text/html' } });
+    }
   }
 }
 
-async function processQueue() {
-  const now = Date.now();
+async function updateCache(sub_id_1, phone, cache, expiration) {
+  if (sub_id_1) {
+    await cache.put(`sub_id_1:${sub_id_1}`, '1', { expirationTtl: expiration });
+  }
+  if (phone) {
+    await cache.put(`phone:${phone}`, '1', { expirationTtl: expiration });
+  }
+}
 
+async function processQueue(env, cacheExpiration) {
+  const now = Date.now();
   for (let i = queue.length - 1; i >= 0; i--) {
     const { formData, timestamp } = queue[i];
-
     if (now - timestamp >= maxProcessingTime) {
       logFile.push({ formData, timestamp, status: 'No response from server' });
       queue.splice(i, 1);
     } else {
-      const get_ip = formData.get("get_ip"); // Ensure get_ip is defined
-      const country_code = formData.get("country_code") || 'Unknown'; // Ensure country_code is defined
+      const get_ip = formData.get("get_ip");
+      const country_code = formData.get("country_code") || 'Unknown';
       const body1 = createBody1(get_ip, country_code, formData, env.api_key, env.id_webmaster, env.id_offer, env.id_source, env.id_stream);
-
-      // Convert body1 to URL-encoded string
       const urlEncodedBody = new URLSearchParams(body1).toString();
-
-      // Determine the API endpoint based on USE_DYNAMIC_THANK_YOU
       const apiEndpoint = USE_DYNAMIC_THANK_YOU ? 'http://httpbin.org/post' : 'https://api.cpa.house/method/send_order';
 
       try {
@@ -132,33 +123,30 @@ async function processQueue() {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         });
 
-        const responseBodyText = await apiResponse.text(); // Extract the response body as text
-
-        // Attempt to parse the response body as JSON
+        const responseBodyText = await apiResponse.text();
         let responseBody;
         try {
           responseBody = JSON.parse(responseBodyText);
-          body.msg = JSON.stringify(responseBody); // Stringify the JSON object
+          body.msg = JSON.stringify(responseBody);
         } catch (e) {
-          body.msg = `"${responseBodyText}"`; // Quote the raw text
+          body.msg = `"${responseBodyText}"`;
         }
 
         if (apiResponse.ok) {
           logFile.push({ formData, timestamp, status: 'Success', responseCode: apiResponse.status });
-          updateCache(formData.get("sub_id_1"), formData.get("phone")); // Update cache here
+          await updateCache(formData.get("sub_id_1"), formData.get("phone"), env.CACHE, cacheExpiration);
+          queue.splice(i, 1);
         } else {
           logFile.push({ formData, timestamp, status: 'Error. Next try in 30 min', responseCode: apiResponse.status });
         }
-        queue.splice(i, 1);
       } catch (error) {
         // Optionally retry logic can be added here if needed
       }
     }
   }
 
-  // Schedule the next processing of the queue if there are items left
   if (queue.length > 0) {
-    setTimeout(processQueue, processingInterval);
+    setTimeout(() => processQueue(env, cacheExpiration), processingInterval);
   }
 }
 
@@ -201,7 +189,6 @@ function createBody1(get_ip, country_code, formData, api_key, id_webmaster, id_o
     county_code: country_code,
   };
 
-  // Iterate over the form data to find additional fields named sub_id_1, sub_id_2, etc.
   for (const [key, value] of formData.entries()) {
     if (key.startsWith('sub_id_')) {
       body[key] = value;
@@ -240,7 +227,6 @@ function getThankYouPage(responseCode, body, notionResponse) {
 }
 
 async function fetchThankYouPage() {
-  // Assuming the Hugo site is hosted on the same Cloudflare Pages domain
   const response = await fetch('https://uz-6.pages.dev/uz/thanks/');
   if (!response.ok) {
     throw new Error('Failed to fetch thank you page');
@@ -260,8 +246,6 @@ function convertToStrings(obj) {
 
 async function pushToNotion(body, responseCode, notionApiKey, notionDatabaseId) {
   const notionUrl = `https://api.notion.com/v1/pages`;
-
-  // Convert all values in the body object to strings
   convertToStrings(body);
 
   const notionBody = {
@@ -287,7 +271,7 @@ async function pushToNotion(body, responseCode, notionApiKey, notionDatabaseId) 
       id_stream: { rich_text: [{ text: { content: body.id_stream } }] },
       errors: { rich_text: [{ text: { content: body.errors } }] },
       msg: { rich_text: [{ text: { content: body.msg } }] },
-      response_code: { rich_text: [{ text: { content: responseCode.toString() } }] }, // Convert responseCode to string and include as rich_text
+      response_code: { rich_text: [{ text: { content: responseCode.toString() } }] },
     },
   };
 
@@ -312,11 +296,4 @@ async function pushToNotion(body, responseCode, notionApiKey, notionDatabaseId) 
   } catch (error) {
     return { responseBody: null, errors: `Error pushing data to Notion: ${error.message}` };
   }
-}
-
-// Update cache with new values
-function updateCache(sub_id_1, phone) {
-  const now = Date.now();
-  cache.set(`sub_id_1:${sub_id_1}`, { timestamp: now });
-  cache.set(`phone:${phone}`, { timestamp: now });
 }
