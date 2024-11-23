@@ -60,13 +60,19 @@ function orientation(event) {
 }
 
 function formSubmit(event) {
-    if (!formSubmitted) { // Check if the form has already been submitted
-        formSubmitted = true; // Set the flag to true
-        document.getElementById("order_form").submit();
-    } else {
-        console.log('Form has already been submitted');
+    if (formSubmitted) { // Check if the form has already been submitted
         event.preventDefault(); // Prevent the default form submission
+        console.log('Form has already been submitted');
+        return;
     }
+    formSubmitted = true; // Set the flag to true
+    // Disable the submit button
+    const submitButton = document.querySelector('button[type="submit"]');
+    if (submitButton) {
+        submitButton.disabled = true;
+    }
+    // Submit the form
+    document.getElementById("order_form").submit();
 }
 
 function fingerprint_language() {
