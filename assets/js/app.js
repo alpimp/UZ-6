@@ -2,6 +2,7 @@ import * as params from '@params';
 const translations = JSON.parse(document.getElementById('translations').textContent);
 
 const score = params.lg;
+const msg = params.load;
 document.getElementById("test").innerHTML = score;
 
 function processInput(phone, ccode) {
@@ -266,14 +267,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const preloaderContent = document.createElement('div');
     preloaderContent.className = 'preloader-content';
     preloaderContent.style.cssText = `
-        background: white;
-        padding: 20px;
+        background: Gainsboro;
+        opacity:0.6;
+        padding: 520px;
         border-radius: 5px;
         text-align: center;
+        font-weight: bold;
     `;
 
     const preloaderText = document.createElement('p');
-    preloaderText.textContent = 'Submitting...';
+    preloaderText.textContent = msg;
 
     preloaderContent.appendChild(preloaderText);
     preloader.appendChild(preloaderContent);
