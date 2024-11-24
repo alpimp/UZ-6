@@ -13,13 +13,14 @@
    {{ with resources.Get . | resources.Minify | resources.Fingerprint }} <style>{{ .Content | safeCSS  }}</style> {{ end  }}
   {{ end }}
 
-  {{ $lg := printf "\"%s\"" (.Site.Language.Lang | upper | default "") }}
+  <!--{{ $lg := printf "\"%s\"" (.Site.Language.Lang | upper | default "") }} -->
+  {{ $lg := .Site.Language.Lang | upper | default "" }}
   {{ .Scratch.Set "lg" $lg }}
     {{- partial "navbar.html" . -}}
 
 <!-- Container element -->
     {{- block "main" . }}{{ end -}}
-     <div class="parallax"></div> 
+     <div class="parallax"></div>
     {{- if or (eq .Site.Params.footer.enable nil) (.Site.Params.footer.enable) }}
       {{ partial "footer.html" . }}
     {{ end }}
@@ -27,7 +28,7 @@
   {{ . | safeHTML }}
   {{ end }}
     {{ partial "scripts.html" . }}
-     {{ partial "custom/footer-end.html" (dict "curlang" $lg "invalidNumber" (T "invalidNumber") "invalidName" (T "invalidName") "context" .)  }}
+     {{ partial "custom/footer-end.html" (dict "curlang" $lg "lg" $lg "invalidNumber" (T "invalidNumber") "invalidName" (T "invalidName") "context" .)  }}
     <!--  {{ partial "custom/cloudflare.html" . }} -->
 
   </body>

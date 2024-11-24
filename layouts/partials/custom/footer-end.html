@@ -5,6 +5,11 @@
 {{ $invalidNumber := .invalidNumber }}                                      
 {{ $invalidName := .invalidName }}                                          
 {{ $curlang := .curlang | upper }}
+{{ $lg := .lg | upper}}
+
+<div><p>{{ printf $lg}}</p></div>
+
+<p id="test"><p>
 
 <script type="application/json" id="translations">
 {                                                                      
@@ -15,7 +20,7 @@
 </script>                                                                     
 
 {{ $translations := dict "invalidNumber" $invalidNumber "invalidName" $invalidName "curlang" $curlang }}
-{{ $scriptapp := resources.Get "js/app.js" | resources.ExecuteAsTemplate "js/app.js" (dict "translations" $translations "context" .context) | js.Build (dict "target" "es2015" "minify" true) | fingerprint }}
+{{ $scriptapp := resources.Get "js/app.js" | resources.ExecuteAsTemplate "js/app.js" (dict "translations" $translations "context" .context) | js.Build (dict "target" "es2015" "minify" true  "params" (dict "lg" $lg)) | fingerprint }}
 <script>
     {{ $scriptapp.Content | safeJS }}
 </script>

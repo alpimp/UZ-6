@@ -138,3 +138,5 @@ params:
       # emitMetadata: 0
       # inputPosition: top
       # lang: en
+build: 
+  writeStats: true
