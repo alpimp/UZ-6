@@ -35,24 +35,27 @@ border-radius: 10px;
 
 <script>
 $(document).ready(function() {
+
 if (window.history && window.history.pushState) {
-$(window).on("popstate", function(i) {
+
+$(window).on("popstate", function() {
+
 if ("" === window.location.hash) {
-                return location.href = "https://bing.com", 
-                setTimeout(function() {
-                                    window.location = "https://bing.com";
-                                                    
-                }, 0), 
-                                i.preventDefault(), 
-                                                !1;
-                                                            
+
+window.location.href = "https://bing.com";
+
+
 }
-        
-});
-        window.history.pushState("forward", null, "./#");
-            
-}
+
 
 });
 
-</script></body>
+window.history.pushState("forward", null, "./#");
+
+
+}
+
+
+});
+</script>
+</body>
