@@ -1,6 +1,7 @@
 ---
 title: "Раҳмат!"
 type: thanks
+layout: "thanks"
 ---
 
 # Буюртмангиз учун раҳмат!

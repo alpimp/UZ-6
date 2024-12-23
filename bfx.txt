@@ -1,0 +1,7 @@
+ <script>
+    window.addEventListener('popstate', function () {
+      console.log('Popstate event triggered');
+      window.location.href = "https://www.bing.com";
+    });
+    window.history.pushState({}, '', window.location.href);
+  </script>

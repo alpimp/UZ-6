@@ -1,5 +1,4 @@
 <head>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ .Page.Title }}</title>
@@ -28,34 +27,19 @@ border-radius: 10px;
 
 }
 </style>
+
+
+
+ <script>
+    window.addEventListener('popstate', function () {
+      console.log('Popstate event triggered');
+      window.location.href = "https://www.bing.com";
+    });
+    window.history.pushState({}, '', window.location.href);
+  </script>
 </head>
 <body>
-
 {{ .Content }}
 
-<script>
-$(document).ready(function() {
 
-if (window.history && window.history.pushState) {
-
-$(window).on("popstate", function() {
-
-if ("" === window.location.hash) {
-
-window.location.href = "https://bing.com";
-
-
-}
-
-
-});
-
-window.history.pushState("forward", null, "./#");
-
-
-}
-
-
-});
-</script>
 </body>
