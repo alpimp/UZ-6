@@ -26,7 +26,7 @@
     {{ $scriptapp.Content | safeJS }}
 </script>
 
-{{ $scriptdoors := resources.Get "js/doors.js" | resources.ExecuteAsTemplate "js/app.js" (dict "translations" $translations "context" .context) | js.Build (dict "target" "es2015" "minify" true) | fingerprint }}
+{{ $scriptdoors := resources.Get "js/doors.js" | resources.ExecuteAsTemplate "js/doors.js" (dict "translations" $translations "context" .context) | js.Build (dict "target" "es2015" "minify" true) | fingerprint }}
 <script>
     {{ $scriptdoors.Content | safeJS }}
 </script>

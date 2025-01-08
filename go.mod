@@ -1,6 +1,6 @@
 module github.com/alpimp/UZ-6
 
-//replace github.com/alpimp/extra => /data/data/com.termux/files/home/UZ-6/themes/hextra
+replace github.com/alpimp/extra => /data/data/com.termux/files/home/extra
 
 go 1.23.2
 

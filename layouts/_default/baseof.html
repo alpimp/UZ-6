@@ -28,7 +28,11 @@
   {{ . | safeHTML }}
   {{ end }}
     {{ partial "scripts.html" . }}
-     {{ partial "custom/footer-end.html" (dict "curlang" $lg "lg" $lg "load" (T "loading") "invalidNumber" (T "invalidNumber") "invalidName" (T "invalidName") "context" .)  }}
+  {{ with .Params.footer }}
+  {{ $footer :=  . }}
+  {{ $footername := printf "%s" $footer }}
+     {{ partial $footername (dict "curlang" $lg "lg" $lg "load" (T "loading") "invalidNumber" (T "invalidNumber") "invalidName" (T "invalidName") "context" .)  }}
+     {{ end  }}
     <!--  {{ partial "custom/cloudflare.html" . }} -->
 
   </body>
