@@ -34,6 +34,7 @@ languages:
 
 
 module:
+  noVendor: "*"
   hugoVersion:
     extended: true
     min: "0.132.0"
