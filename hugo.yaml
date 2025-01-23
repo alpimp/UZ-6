@@ -27,6 +27,11 @@ languages:
     languageName: UZ
     weight: 3
     title: MensPower
+  uzl:
+    languageName: UZL
+    weight: 4
+    title: MensPower
+
 
 module:
   hugoVersion:

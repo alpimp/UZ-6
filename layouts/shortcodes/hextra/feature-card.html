@@ -1,9 +1,11 @@
 {{- $title := .Get "title" -}}
 {{- $subtitle := .Get "subtitle" -}}
 {{- $class := .Get "class" -}}
+{{- $divclass := .Get "divclass" -}}
 {{- $image := .Get "image" -}}
 {{- $imageClass := .Get "imageClass" -}}
 {{- $style := .Get "style" -}}
+{{- $divstyle := .Get "divstyle" -}}
 {{- $icon := .Get "icon" -}}
 {{- $link := .Get "link" -}}
 
@@ -14,6 +16,10 @@
   {{- $image = relURL (strings.TrimPrefix "/" $image) -}}
 {{- end -}}
 
+<div 
+  {{ with $divstyle }}style="{{ . | safeCSS }}"{{ end }}
+  class="{{ $divclass }} hextra-feature-card not-prose hx-block hx-relative hx-overflow-hidden hx-rounded-3xl hx-border hx-border-gray-200 hover:hx-border-gray-300 dark:hx-border-neutral-800 dark:hover:hx-border-neutral-700 before:hx-pointer-events-none before:hx-absolute before:hx-inset-0 before:hx-bg-glass-gradient"
+  >
 <a
   {{ with $link }}href="{{ $href }}" {{ with $external }} target="_blank" rel="noreferrer"{{ end }}{{ end }}
   {{ with $style }}style="{{ . | safeCSS }}"{{ end }}
@@ -34,3 +40,4 @@
     <img src="{{ . }}" class="hx-absolute hx-max-w-none {{ $imageClass }}" alt="{{ $title }}" />
   {{- end -}}
 </a>
+</div>

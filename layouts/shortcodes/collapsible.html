@@ -28,7 +28,7 @@
   function truncateText(text, maxWords) {
     const words = text.split(' ');
     if (words.length > maxWords) {
-            return words.slice(0, maxWords).join(' ') + '...' + ' <span style="cursor: pointer; color: blue; text-decoration: underline;">{{ T "readMore" }}</span>';
+            return words.slice(0, maxWords).join(' ') + '...' + ' <span class="readmore" style=" cursor: pointer; color: blue; text-decoration: underline; font-family: Roboto; font-size: 1rem; background: aquamarine; ">{{ T "readMore" }}</span>';
     }
     return text;
   }

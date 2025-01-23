@@ -21,18 +21,20 @@
   class="{{ $class }} hextra-feature-grid hx-grid sm:max-lg:hx-grid-cols-2 max-sm:hx-grid-cols-1 hx-gap-4 hx-w-full not-prose"
   {{ with $css }}style="{{ . | safeCSS }}"{{ end }}
 >
-  <div class="hx-w-full">
-    {{ .Inner }}
-  </div>
   {{- with $image }}
-  <div class="hx-mx-auto">
+  <div class="mx-auto">
     <a
       {{ with $imageLink }}href="{{ $href }}" {{ with $imageLinkExternal }} target="_blank" rel="noreferrer"{{ end }}{{ end }}
-      {{ with $imageStyle }}style="{{ . | safeCSS }}"{{ end }}
+      
       class="{{ $imageClass }} {{ if $imageCard }}hextra-feature-card not-prose hx-block hx-relative hx-p-6 hx-overflow-hidden hx-rounded-3xl hx-border hx-border-gray-200 hover:hx-border-gray-300 dark:hx-border-neutral-800 dark:hover:hx-border-neutral-700 before:hx-pointer-events-none before:hx-absolute before:hx-inset-0 before:hx-bg-glass-gradient{{ end }}"
     >
-      <img src="{{ $image }}" width="{{ $imageWidth }}" height="{{ $imageHeight }}" {{ with $imageTitle }}alt="{{ $imageTitle }}"{{ end }}/>
+    <div style="width: {{ $imageWidth }}; height: {{ $imageHeight }}">
+      <img src="{{ $image }}" width="100%" height="100%" {{ with $imageStyle }}style="{{ . | safeCSS }}" {{ end }}{{ with $imageTitle }}alt="{{ $imageTitle }}"{{ end }}/>
+    </div>
     </a>
   </div>
   {{ end -}}
+<span style="text-align: center; color: #B3261E; font-size: 18px; font-family: Roboto; font-weight: 700; line-height: 26px; word-wrap: break-word">
+    {{ .Inner }}
+</span>
 </div>
