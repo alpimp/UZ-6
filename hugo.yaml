@@ -38,7 +38,6 @@ module:
     extended: true
     min: "0.132.0"
 
-  workspace: hugo.work
   imports:
     - path: github.com/alpimp/extra
       mounts:
