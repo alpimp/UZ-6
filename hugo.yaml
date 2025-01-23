@@ -37,19 +37,13 @@ module:
   hugoVersion:
     extended: true
     min: "0.132.0"
-
   imports:
-    - path: github.com/alpimp/extra
+    - path: github.com/alpimp/extra  # Replace with your actual repo path
       mounts:
-        - source: assets
-          target: assets
-        - source: content
-          target: content
-        - source: layouts
-          target: layouts
-        - source: static
-          target: static
+        - source: content/comments  # Path in repo-2
+          target: content/comments  # Path in repo-1
 
+            
 markup:
   goldmark:
     renderer:
