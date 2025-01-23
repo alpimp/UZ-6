@@ -36,11 +36,20 @@ languages:
 module:
   hugoVersion:
     extended: true
-    min: "0.112.0"
+    min: "0.132.0"
 
   workspace: hugo.work
   imports:
     - path: github.com/alpimp/extra
+      mounts:
+        - source: assets
+          target: assets
+        - source: content
+          target: content
+        - source: layouts
+          target: layouts
+        - source: static
+          target: static
 
 markup:
   goldmark:
@@ -133,7 +142,7 @@ params:
 
     # https://giscus.app/
     giscus:
-      repo: imfing/hextra
+      # repo: imfing/hextra
       repoId: R_kgDOJ9fJag
       category: General
       categoryId: DIC_kwDOJ9fJas4CY7gW
