@@ -1,0 +1,7 @@
+[module]
+  [[module.imports]]
+    path = "github.com/alpimp/extra"
+    [[module.imports.mounts]]
+      source = "content/comments"
+      target = "content/comments"
+
