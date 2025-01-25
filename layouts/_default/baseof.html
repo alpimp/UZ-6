@@ -15,6 +15,9 @@
 
   <!--{{ $lg := printf "\"%s\"" (.Site.Language.Lang | upper | default "") }} -->
   {{ $lg := .Site.Language.Lang | upper | default "" }}
+  {{ if ( eq $lg "UZL" ) }}
+  {{ $lg = "UZ" }}
+  {{ end }}
   {{ .Scratch.Set "lg" $lg }}
     {{- partial "navbar.html" . -}}
 
